@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  web-app:
+    build: ./web-app
+    container_name: web-app
+    ports:
+      - "5050:5050"
+    depends_on:
+      - mongo
+    env_file:
+      - .env
+    volumes:
+      - ./web-app:/app
+
+  machine-learning-client:
+    build: ./machine-learning-client
+    container_name: ml-client
+    depends_on:
+      - mongo
+    env_file:
+      - .env
+    volumes:
+      - ./machine-learning-client:/app
+
+volumes:
+  mongo-data:
