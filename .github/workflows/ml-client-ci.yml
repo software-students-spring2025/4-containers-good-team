@@ -1,0 +1,46 @@
+name: Machine Learning Client CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-and-format:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11"]
+        subdir: [machine-learning-client]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          cd ${{ matrix.subdir }}
+          python -m pip install --upgrade pip
+          pip install pipenv
+          pipenv install --dev
+
+      - name: Lint with pylint
+        run: |
+          cd ${{ matrix.subdir }}
+          pipenv run pylint **/*.py
+
+      - name: Format with black
+        run: |
+          cd ${{ matrix.subdir }}
+          pipenv run black --check --diff .
+
+      - name: Run Tests
+        run: |
+          cd ${{ matrix.subdir }}
+          pipenv run pytest

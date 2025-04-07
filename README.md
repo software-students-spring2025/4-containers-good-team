@@ -13,7 +13,7 @@ This project is a **Microphone Translation App** designed to capture spoken lang
 
 - [Isaac Vivar](https://github.com/isaacv3)
 - [Ethan Yu](https://github.com/ethanyuu910)
-- [Teammate 3](https://github.com/teammate3)
+- [Giulia Carvalho](https://github.com/giulia-carvalho)
 - [Teammate 4](https://github.com/teammate4)
 
 
