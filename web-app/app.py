@@ -1,8 +1,8 @@
 """
 Web Application for Microphone Translation.
 
-This Flask app connects to a MongoDB database and handles routes 
-to interact with the microphone translation app.
+This Flask app connects to a MongoDB database and handles routes
+ to interact with the microphone translation app.
 """
 
 import os
