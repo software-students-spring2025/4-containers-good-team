@@ -6,7 +6,7 @@ This Flask app connects to a MongoDB database and handles routes
 """
 
 import os
-from flask import Flask
+from flask import Flask, render_template, redirect, url_for
 from flask_pymongo import PyMongo
 from dotenv import load_dotenv
 
@@ -20,7 +20,33 @@ mongo = PyMongo(app)
 @app.route("/")
 def home():
     """Home page for the web app."""
-    return "<h1>hello<h1>"
+    return render_template('index.html')
+
+
+@app.route("/translator")
+def translator():
+    """ translate page """
+    return render_template('translator.html')
+
+@app.route("/register")
+def register():
+    """ Sign in page"""
+    #when user authenticated 
+    #redirect to login page 
+    return render_template('register.html')
+
+@app.route("/login")
+def login():
+    """Login page"""
+    #when user authenticated 
+    #redirect to translate page
+    return render_template('login.html')
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    """Logout Functionality"""
+    #logout user with flask login 
+    return redirect(url_for("home"))
 
 
 if __name__ == "__main__":
