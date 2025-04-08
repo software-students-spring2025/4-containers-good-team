@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TranslateNow - Voice Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      background-color: #007BFF;
+      color: white;
+      padding: 1em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.5em;
+    }
+
+    .logout-btn {
+      background-color: white;
+      color: #007BFF;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.9em;
+      cursor: pointer;
+    }
+
+    .logout-btn:hover {
+      background-color: #e0e0e0;
+    }
+
+    .chat-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1em;
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 12px 18px;
+      border-radius: 16px;
+      font-size: 1em;
+      line-height: 1.4em;
+    }
+
+    .user {
+      align-self: flex-end;
+      background-color: #DCF8C6;
+    }
+
+    .bot {
+      align-self: flex-start;
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+    }
+
+    .input-container {
+      padding: 1em;
+      border-top: 1px solid #ccc;
+      background-color: #fff;
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+    }
+
+    .input-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1em;
+    }
+
+    select {
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 1em;
+      flex: 1;
+    }
+
+    .record-btn {
+      padding: 12px 24px;
+      font-size: 1em;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .record-btn:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>TranslateNow</h1>
+    <form action="/logout" method="POST">
+      <button class="logout-btn" type="submit">Logout</button>
+    </form>
+  </header>
+
+  <div class="chat-container" id="chat">
+    <div class="message bot">Welcome! Select a language and press the mic to speak.</div>
+  </div>
+
+  <div class="input-container">
+    <div class="input-controls">
+      <select id="language">
+        <option value="es">Spanish</option>
+        <option value="fr">French</option>
+        <option value="de">German</option>
+        <option value="el">Greek</option>
+        <option value="it">Italian</option>
+        <option value="ja">Japanese</option>
+        <option value="zh">Chinese (Simplified)</option>
+        <option value="ar">Arabic</option>
+        <option value="ru">Russian</option>
+        <option value="hi">Hindi</option>
+      </select>
+      <button class="record-btn" onclick="startListening()">🎙️ Speak</button>
+    </div>
+  </div>
+
+  <script>
+    const chat = document.getElementById("chat");
+
+    function appendMessage(text, sender) {
+      const msg = document.createElement("div");
+      msg.className = `message ${sender}`;
+      msg.innerText = text;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function startListening() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.start();
+
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        appendMessage(transcript, "user");
+
+        const selectedLang = document.getElementById("language").value;
+
+        fetch("/translate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ text: transcript, language: selectedLang })
+        })
+        .then(response => response.json())
+        .then(data => {
+          appendMessage(data.translated, "bot");
+        })
+        .catch(err => {
+          console.error(err);
+          appendMessage("Oops! Something went wrong with the translation.", "bot");
+        });
+      };
+
+      recognition.onerror = function(event) {
+        appendMessage("Could not understand audio. Please try again.", "bot");
+        console.error(event.error);
+      };
+    }
+  </script>
+
+</body>
+</html>
