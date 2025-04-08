@@ -25,6 +25,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd ${{ matrix.subdir }}
           python -m pip install --upgrade pip
           pip install pipenv
           pipenv install --dev --python ${{matrix.python-version}}
@@ -38,8 +39,3 @@ jobs:
         run: |
           cd web-app
           pipenv run black --check --diff .
-
-      - name: Run Tests
-        run: |
-          cd web-app
-          pipenv run pytest

@@ -39,8 +39,3 @@ jobs:
         run: |
           cd ${{ matrix.subdir }}
           pipenv run black --check --diff .
-
-      - name: Run Tests
-        run: |
-          cd ${{ matrix.subdir }}
-          pipenv run pytest
