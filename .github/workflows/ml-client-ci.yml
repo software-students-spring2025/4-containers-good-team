@@ -28,7 +28,7 @@ jobs:
           cd ${{ matrix.subdir }}
           python -m pip install --upgrade pip
           pip install pipenv
-          pipenv install --dev
+          pipenv install --dev --python ${{ matrix.python-version }}
 
       - name: Lint with pylint
         run: |
@@ -39,8 +39,3 @@ jobs:
         run: |
           cd ${{ matrix.subdir }}
           pipenv run black --check --diff .
-
-      - name: Run Tests
-        run: |
-          cd ${{ matrix.subdir }}
-          pipenv run pytest

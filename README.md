@@ -1,6 +1,6 @@
 ![Lint-free](https://github.com/nyu-software-engineering/containerized-app-exercise/actions/workflows/lint.yml/badge.svg)
-![ML Client Build Status](https://img.shields.io/github/workflow/status/my-org/microphone-translation-app/ml-client-ci)
-![Web App Build Status](https://img.shields.io/github/workflow/status/my-org/microphone-translation-app/web-app-ci)
+[![Machine Learning Client CI](https://github.com/software-students-spring2025/4-containers-good-team/actions/workflows/ml-client-ci.yml/badge.svg)](https://github.com/software-students-spring2025/4-containers-good-team/actions/workflows/ml-client-ci.yml)
+[![Web App CI](https://github.com/software-students-spring2025/4-containers-good-team/actions/workflows/wep-app-ci.yml/badge.svg)](https://github.com/software-students-spring2025/4-containers-good-team/actions/workflows/wep-app-ci.yml)
 
 
 # Containerized App Exercise
@@ -14,6 +14,6 @@ This project is a **Microphone Translation App** designed to capture spoken lang
 - [Isaac Vivar](https://github.com/isaacv3)
 - [Ethan Yu](https://github.com/ethanyuu910)
 - [Giulia Carvalho](https://github.com/giulia-carvalho)
-- [Teammate 4](https://github.com/teammate4)
+- [Margarita Billi](https://github.com/pinkmaggs)
 
 

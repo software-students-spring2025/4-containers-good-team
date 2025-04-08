@@ -1,3 +1,9 @@
+"""
+Machine Learning Client for MongoDB Integration.
+
+This script connects to a MongoDB database using the connection string.
+"""
+
 import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
