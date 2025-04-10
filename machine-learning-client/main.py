@@ -22,6 +22,14 @@ db = client.get_default_database()
 translator = Translator()
 
 def process_untranslated_records():
+    """
+    Fetches all records from the 'sensor_data' collection that have input text
+    but have not yet been translated. For each such record, it performs
+    language translation using the Google Translate API and updates the record
+    in the database with the translated text and a timestamp.
+
+    The function logs the number of records processed and any translation errors encountered.
+    """
     pending_records = list(db.sensor_data.find({
         "input_text": {"$exists": True}, 
         "translated_text": {"$exists": False}
@@ -35,7 +43,6 @@ def process_untranslated_records():
             try:
                 result = translator.translate(raw_text, dest=target_language)
                 translated_text = result.text
-                
                 db.sensor_data.update_one(
                     {"_id": record["_id"]},
                     {"$set": {

@@ -32,21 +32,21 @@ def translator():
 @app.route("/register")
 def register():
     """ Sign in page"""
-    #when user authenticated 
-    #redirect to login page 
+    #when user authenticated
+    #redirect to login page
     return render_template('register.html')
 
 @app.route("/login")
 def login():
     """Login page"""
-    #when user authenticated 
+    #when user authenticated
     #redirect to translate page
     return render_template('login.html')
 
 @app.route("/logout", methods=["POST"])
 def logout():
     """Logout Functionality"""
-    #logout user with flask login 
+    #logout user with flask login
     return redirect(url_for("home"))
 
 @app.route("/api/sensor_data", methods=["GET"])
@@ -81,7 +81,6 @@ def submit_text():
     target_language = data.get("target_language", "es")
     if not input_text:
         return jsonify({"error": "Input text is required"}), 400
-    
     document = {
         "input_text": input_text,
         "target_language": target_language,
