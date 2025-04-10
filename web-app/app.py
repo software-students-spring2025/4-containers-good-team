@@ -26,22 +26,29 @@ sensor_data_collection = mongo.db.sensor_data  # sensor data and translations
 @app.route("/")
 def home():
     """Home page for the web app."""
-    return render_template('index.html')
+    return render_template("index.html")
 
 
 @app.route("/translator")
 def translator():
+<<<<<<< HEAD
     """Translate page"""
     # check if logged
     if not session.get("username"):
         flash("You must be logged in to access the translator.", "warning")
         return redirect(url_for("login"))
     return render_template('translator.html')
+=======
+    """translate page"""
+    return render_template("translator.html")
+
+>>>>>>> main
 
 # Log in and registration
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+<<<<<<< HEAD
     """ Sign in page"""
     # authenticate user
     if request.method == "POST":
@@ -77,10 +84,18 @@ def register():
         return redirect(url_for("login"))
     # get request; render registration form 
     return render_template('register.html')
+=======
+    """Sign in page"""
+    # when user authenticated
+    # redirect to login page
+    return render_template("register.html")
+
+>>>>>>> main
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Login page"""
+<<<<<<< HEAD
     #when user authenticated 
     if request.method == "POST":
         email = request.form.get("email")
@@ -99,16 +114,29 @@ def login():
             return redirect(url_for("login"))
     # get request; render login page 
     return render_template('login.html')
+=======
+    # when user authenticated
+    # redirect to translate page
+    return render_template("login.html")
+
+>>>>>>> main
 
 @app.route("/logout", methods=["POST"])
 def logout():
     """Logout Functionality"""
+<<<<<<< HEAD
     session.clear()
     flash("Logged out successfully.", "success")
     #logout user with flask login 
     return redirect(url_for("home"))
 
 # Endpoints for sensor/translation data
+=======
+    # logout user with flask login
+    return redirect(url_for("home"))
+
+
+>>>>>>> main
 @app.route("/api/sensor_data", methods=["GET"])
 def get_sensor_data():
     """Get sensor data from MongoDB."""
@@ -119,19 +147,18 @@ def get_sensor_data():
             record["timestamp"] = record["timestamp"].isoformat()
     return jsonify(sensor_data)
 
+
 @app.route("/simulate_input", methods=["GET"])
 def simulate_input():
     """Simulate a test document in MongoDB."""
     test_document = {
         "input_text": "Hello, world! How are you?",
         "target_language": "es",
-        "timestamp": datetime.datetime.now()
+        "timestamp": datetime.datetime.now(),
     }
     result = mongo.db.sensor_data.insert_one(test_document)
-    return jsonify({
-        "message": "Test document inserted",
-        "id": str(result.inserted_id)
-    })
+    return jsonify({"message": "Test document inserted", "id": str(result.inserted_id)})
+
 
 @app.route("/submit_text", methods=["POST"])
 def submit_text():
@@ -141,17 +168,15 @@ def submit_text():
     target_language = data.get("target_language", "es")
     if not input_text:
         return jsonify({"error": "Input text is required"}), 400
-    
     document = {
         "input_text": input_text,
         "target_language": target_language,
-        "timestamp": datetime.datetime.now()
+        "timestamp": datetime.datetime.now(),
     }
     result = mongo.db.sensor_data.insert_one(document)
-    return jsonify({
-        "message": "Text submitted successfully",
-        "id": str(result.inserted_id)
-    })
+    return jsonify(
+        {"message": "Text submitted successfully", "id": str(result.inserted_id)}
+    )
 
 
 if __name__ == "__main__":
