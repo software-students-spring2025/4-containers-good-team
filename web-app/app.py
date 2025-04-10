@@ -21,33 +21,37 @@ mongo = PyMongo(app)
 @app.route("/")
 def home():
     """Home page for the web app."""
-    return render_template('index.html')
+    return render_template("index.html")
 
 
 @app.route("/translator")
 def translator():
-    """ translate page """
-    return render_template('translator.html')
+    """translate page"""
+    return render_template("translator.html")
+
 
 @app.route("/register")
 def register():
-    """ Sign in page"""
-    #when user authenticated
-    #redirect to login page
-    return render_template('register.html')
+    """Sign in page"""
+    # when user authenticated
+    # redirect to login page
+    return render_template("register.html")
+
 
 @app.route("/login")
 def login():
     """Login page"""
-    #when user authenticated
-    #redirect to translate page
-    return render_template('login.html')
+    # when user authenticated
+    # redirect to translate page
+    return render_template("login.html")
+
 
 @app.route("/logout", methods=["POST"])
 def logout():
     """Logout Functionality"""
-    #logout user with flask login
+    # logout user with flask login
     return redirect(url_for("home"))
+
 
 @app.route("/api/sensor_data", methods=["GET"])
 def get_sensor_data():
@@ -59,19 +63,18 @@ def get_sensor_data():
             record["timestamp"] = record["timestamp"].isoformat()
     return jsonify(sensor_data)
 
+
 @app.route("/simulate_input", methods=["GET"])
 def simulate_input():
     """Simulate a test document in MongoDB."""
     test_document = {
         "input_text": "Hello, world! How are you?",
         "target_language": "es",
-        "timestamp": datetime.datetime.now()
+        "timestamp": datetime.datetime.now(),
     }
     result = mongo.db.sensor_data.insert_one(test_document)
-    return jsonify({
-        "message": "Test document inserted",
-        "id": str(result.inserted_id)
-    })
+    return jsonify({"message": "Test document inserted", "id": str(result.inserted_id)})
+
 
 @app.route("/submit_text", methods=["POST"])
 def submit_text():
@@ -84,13 +87,12 @@ def submit_text():
     document = {
         "input_text": input_text,
         "target_language": target_language,
-        "timestamp": datetime.datetime.now()
+        "timestamp": datetime.datetime.now(),
     }
     result = mongo.db.sensor_data.insert_one(document)
-    return jsonify({
-        "message": "Text submitted successfully",
-        "id": str(result.inserted_id)
-    })
+    return jsonify(
+        {"message": "Text submitted successfully", "id": str(result.inserted_id)}
+    )
 
 
 if __name__ == "__main__":

@@ -21,6 +21,7 @@ db = client.get_default_database()
 
 translator = Translator()
 
+
 def process_untranslated_records():
     """
     Fetches all records from the 'sensor_data' collection that have input text
@@ -30,10 +31,11 @@ def process_untranslated_records():
 
     The function logs the number of records processed and any translation errors encountered.
     """
-    pending_records = list(db.sensor_data.find({
-        "input_text": {"$exists": True}, 
-        "translated_text": {"$exists": False}
-    }))
+    pending_records = list(
+        db.sensor_data.find(
+            {"input_text": {"$exists": True}, "translated_text": {"$exists": False}}
+        )
+    )
 
     if pending_records:
         print(f"Processing {len(pending_records)} records...")
@@ -45,16 +47,21 @@ def process_untranslated_records():
                 translated_text = result.text
                 db.sensor_data.update_one(
                     {"_id": record["_id"]},
-                    {"$set": {
-                        "translated_text": translated_text,
-                        "translated_timestamp": datetime.datetime.now()
-                        }}
+                    {
+                        "$set": {
+                            "translated_text": translated_text,
+                            "translated_timestamp": datetime.datetime.now(),
+                        }
+                    },
                 )
-                print(f"Traslated '{raw_text}' to '{translated_text}' for record {record['_id']}")
-            except Exception as e: # pylint: disable=broad-exception-caught
+                print(
+                    f"Traslated '{raw_text}' to '{translated_text}' for record {record['_id']}"
+                )
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 print(f"Error translating record {record['_id']}: {e}")
     else:
         print("No new translation jobs found.")
+
 
 if __name__ == "__main__":
     print("Translation ML Client is running. Press Ctrl+C to exit.")
