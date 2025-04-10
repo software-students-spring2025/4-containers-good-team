@@ -3,11 +3,63 @@
 [![Web App CI](https://github.com/software-students-spring2025/4-containers-good-team/actions/workflows/wep-app-ci.yml/badge.svg)](https://github.com/software-students-spring2025/4-containers-good-team/actions/workflows/wep-app-ci.yml)
 
 
-# Containerized App Exercise
+# Microphone Translation App
 
-## Description
+This containerized application captures speech input through a web interface, transcribes it to text, and translates it into another language using a machine learning client. The system is split into modular services that communicate through a shared MongoDB database.
 
-This project is a **Microphone Translation App** designed to capture spoken language via microphone input, convert it to text, and translate it into another language. The app uses machine learning models for speech recognition and translation.
+
+
+## Components
+
+### Web App (Flask)
+- Collects voice input from the user
+- Submits raw text and language preferences to the database
+- Displays original and translated results
+
+### Machine Learning Client
+- Monitors the database for untranslated entries
+- Uses `googletrans` to translate text
+- Updates the database with translated output
+
+### MongoDB (via Docker)
+- Stores all input and output text documents
+- Serves as the message bus between services
+
+
+## Features
+- Voice input for language translation
+- Real-time interaction between services
+- MongoDB integration for asynchronous communication
+- Fully containerized setup for consistent local and deployment environments
+
+## Getting Started
+
+### Requirements
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
+- [Python](https://www.python.org/downloads/)
+
+---
+
+### Run with Docker
+
+Clone the repository:
+```shell
+git clone https://github.com/software-students-spring2025/4-containers-good-team.git
+```
+
+Run the command:
+```shell
+docker-compose up --build
+```
+
+This will start all three services:
+- Machine Learning Client
+- Flask web app
+- MongoDB database
+
+Access the web app at [http://localhost:5050](http://localhost:5050)
+
 
 ## Team Members
 
