@@ -51,7 +51,7 @@ def process_untranslated_records():
                         }}
                 )
                 print(f"Traslated '{raw_text}' to '{translated_text}' for record {record['_id']}")
-            except Exception as e:
+            except Exception as e: # pylint: disable=broad-exception-caught
                 print(f"Error translating record {record['_id']}: {e}")
     else:
         print("No new translation jobs found.")
