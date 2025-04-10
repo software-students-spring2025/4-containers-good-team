@@ -166,16 +166,32 @@
 
         const selectedLang = document.getElementById("language").value;
 
-        fetch("/translate", {
+        ////fixed 
+        fetch("/submit_text", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ text: transcript, language: selectedLang })
+          body: JSON.stringify({ 
+            input_text: transcript, 
+            target_language: selectedLang 
+          })
         })
         .then(response => response.json())
         .then(data => {
-          appendMessage(data.translated, "bot");
+          appendMessage("Text submitted for translation...", "bot");
+          setTimeout(() => {
+            fetch("/api/sensor_data")
+            .then(response => response.json())
+            .then(records => {
+              const newRecord = records.find(record => record._id === data.id);
+              if (newRecord && newRecord.translated_text) {
+                appendMessage(`Translation: ${newRecord.translated_text}`, "bot");
+              } else {
+                appendMessage("Translation not available yet.", "bot");
+              }
+            });
+          }, 6000);
         })
         .catch(err => {
           console.error(err);
