@@ -21,11 +21,21 @@ db = client.get_default_database()
 
 translator = Translator()
 
+
 def process_untranslated_records():
-    pending_records = list(db.sensor_data.find({
-        "input_text": {"$exists": True}, 
-        "translated_text": {"$exists": False}
-    }))
+    """
+    Fetches all records from the 'sensor_data' collection that have input text
+    but have not yet been translated. For each such record, it performs
+    language translation using the Google Translate API and updates the record
+    in the database with the translated text and a timestamp.
+
+    The function logs the number of records processed and any translation errors encountered.
+    """
+    pending_records = list(
+        db.sensor_data.find(
+            {"input_text": {"$exists": True}, "translated_text": {"$exists": False}}
+        )
+    )
 
     if pending_records:
         print(f"Processing {len(pending_records)} records...")
@@ -35,19 +45,23 @@ def process_untranslated_records():
             try:
                 result = translator.translate(raw_text, dest=target_language)
                 translated_text = result.text
-                
                 db.sensor_data.update_one(
                     {"_id": record["_id"]},
-                    {"$set": {
-                        "translated_text": translated_text,
-                        "translated_timestamp": datetime.datetime.now()
-                        }}
+                    {
+                        "$set": {
+                            "translated_text": translated_text,
+                            "translated_timestamp": datetime.datetime.now(),
+                        }
+                    },
                 )
-                print(f"Traslated '{raw_text}' to '{translated_text}' for record {record['_id']}")
-            except Exception as e:
+                print(
+                    f"Traslated '{raw_text}' to '{translated_text}' for record {record['_id']}"
+                )
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 print(f"Error translating record {record['_id']}: {e}")
     else:
         print("No new translation jobs found.")
+
 
 if __name__ == "__main__":
     print("Translation ML Client is running. Press Ctrl+C to exit.")
