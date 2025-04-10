@@ -7,15 +7,20 @@ This Flask app connects to a MongoDB database and handles routes
 
 import os
 import datetime
-from flask import Flask, render_template, redirect, url_for, jsonify, request
+from flask import (Flask, render_template, redirect, url_for, jsonify, request, session, flash)
 from flask_pymongo import PyMongo
 from dotenv import load_dotenv
+from werkzeug.security import generate_password_hash, check_password_hash
 
 load_dotenv()
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = os.getenv("MONGO_URI")
 mongo = PyMongo(app)
+
+# defining collections
+users_collection = mongo.db.users       # registration
+sensor_data_collection = mongo.db.sensor_data  # sensor data and translations
 
 
 @app.route("/")
@@ -26,29 +31,84 @@ def home():
 
 @app.route("/translator")
 def translator():
-    """ translate page """
+    """Translate page"""
+    # check if logged
+    if not session.get("username"):
+        flash("You must be logged in to access the translator.", "warning")
+        return redirect(url_for("login"))
     return render_template('translator.html')
 
-@app.route("/register")
+# Log in and registration
+
+@app.route("/register", methods=["GET", "POST"])
 def register():
     """ Sign in page"""
-    #when user authenticated 
-    #redirect to login page 
+    # authenticate user
+    if request.method == "POST":
+        first_name = request.form.get("first_name")
+        last_name = request.form.get("last_name")
+        email = request.form.get("email")
+        password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
+        if not (first_name and last_name and email and password and confirm_password):
+            flash("All fields are required.", "danger")
+            return redirect(url_for("register"))
+        if password != confirm_password:
+            flash("Passwords do not match.", "danger")
+            return redirect(url_for("register"))
+        
+        # check if  user already exists
+        existing_user = users_collection.find_one({"email": email})
+        if existing_user:
+            flash("User already exists with that email.", "danger")
+            return redirect(url_for("register"))
+        
+        # create a new user 
+        new_user = {
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": email,
+            "password": generate_password_hash(password),
+            "created_at": datetime.datetime.utcnow()
+        }
+        users_collection.insert_one(new_user)
+        flash("Registration successful! You can now log in.", "success")
+        # redirect to login page
+        return redirect(url_for("login"))
+    # get request; render registration form 
     return render_template('register.html')
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
     """Login page"""
     #when user authenticated 
-    #redirect to translate page
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+        
+        # Check for a user with the provided email
+        user = users_collection.find_one({"email": email})
+        if user and check_password_hash(user["password"], password):
+            session["user_id"] = str(user["_id"])
+            session["username"] = user["email"]
+            flash("Logged in successfully!", "success")
+            #redirect to translate page
+            return redirect(url_for("translator"))
+        else:
+            flash("Invalid email or password.", "danger")
+            return redirect(url_for("login"))
+    # get request; render login page 
     return render_template('login.html')
 
 @app.route("/logout", methods=["POST"])
 def logout():
     """Logout Functionality"""
+    session.clear()
+    flash("Logged out successfully.", "success")
     #logout user with flask login 
     return redirect(url_for("home"))
 
+# Endpoints for sensor/translation data
 @app.route("/api/sensor_data", methods=["GET"])
 def get_sensor_data():
     """Get sensor data from MongoDB."""
