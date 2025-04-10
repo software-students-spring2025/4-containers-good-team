@@ -7,7 +7,7 @@ This Flask app connects to a MongoDB database and handles routes
 
 import os
 import datetime
-from flask import Flask, render_template, redirect, url_for, jsonify
+from flask import Flask, render_template, redirect, url_for, jsonify, request
 from flask_pymongo import PyMongo
 from dotenv import load_dotenv
 
@@ -61,6 +61,7 @@ def get_sensor_data():
 
 @app.route("/simulate_input", methods=["GET"])
 def simulate_input():
+    """Simulate a test document in MongoDB."""
     test_document = {
         "input_text": "Hello, world! How are you?",
         "target_language": "es",
@@ -69,6 +70,26 @@ def simulate_input():
     result = mongo.db.sensor_data.insert_one(test_document)
     return jsonify({
         "message": "Test document inserted",
+        "id": str(result.inserted_id)
+    })
+
+@app.route("/submit_text", methods=["POST"])
+def submit_text():
+    """Backend function to receive user-submitted text (from microphone)"""
+    data = request.get_json()
+    input_text = data.get("input_text")
+    target_language = data.get("target_language", "es")
+    if not input_text:
+        return jsonify({"error": "Input text is required"}), 400
+    
+    document = {
+        "input_text": input_text,
+        "target_language": target_language,
+        "timestamp": datetime.datetime.now()
+    }
+    result = mongo.db.sensor_data.insert_one(document)
+    return jsonify({
+        "message": "Text submitted successfully",
         "id": str(result.inserted_id)
     })
 

@@ -32,12 +32,11 @@ def process_untranslated_records():
         print(f"Processing {len(pending_records)} records...")
         for record in pending_records:
             raw_text = record["input_text"]
-
             target_language = record.get("target_language", "es")
             try:
-                translated_obj = asyncio.run(translator.translate(raw_text, dest=target_language))
-                translated_text = translated_obj.text
-
+                result = translator.translate(raw_text, dest=target_language)
+                translated_text = result.text
+                
                 db.sensor_data.update_one(
                     {"_id": record["_id"]},
                     {"$set": {
