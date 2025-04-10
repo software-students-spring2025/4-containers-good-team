@@ -6,7 +6,8 @@ This Flask app connects to a MongoDB database and handles routes
 """
 
 import os
-from flask import Flask, render_template, redirect, url_for
+import datetime
+from flask import Flask, render_template, redirect, url_for, jsonify
 from flask_pymongo import PyMongo
 from dotenv import load_dotenv
 
@@ -47,6 +48,29 @@ def logout():
     """Logout Functionality"""
     #logout user with flask login 
     return redirect(url_for("home"))
+
+@app.route("/api/sensor_data", methods=["GET"])
+def get_sensor_data():
+    """Get sensor data from MongoDB."""
+    sensor_data = list(mongo.db.sensor_data.find({}))
+    for record in sensor_data:
+        record["_id"] = str(record["_id"])
+        if "timestamp" in record:
+            record["timestamp"] = record["timestamp"].isoformat()
+    return jsonify(sensor_data)
+
+@app.route("/simulate_input", methods=["GET"])
+def simulate_input():
+    test_document = {
+        "input_text": "Hello, world! How are you?",
+        "target_language": "es",
+        "timestamp": datetime.datetime.now()
+    }
+    result = mongo.db.sensor_data.insert_one(test_document)
+    return jsonify({
+        "message": "Test document inserted",
+        "id": str(result.inserted_id)
+    })
 
 
 if __name__ == "__main__":

@@ -1,0 +1,9 @@
+speechrecognition==3.8.1 
+whisper==0.2.0 
+pylint==2.14.5 
+black==22.8.0 
+python-dotenv==0.20.0 
+pymongo==4.2.0 
+googletrans==4.0.0-rc1 
+pyaudio==0.2.12 
+flask==2.1.0
