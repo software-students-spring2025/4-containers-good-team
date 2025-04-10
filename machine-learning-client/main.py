@@ -7,7 +7,6 @@ This script connects to a MongoDB database using the connection string.
 import os
 import time
 import datetime
-import asyncio
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from googletrans import Translator
