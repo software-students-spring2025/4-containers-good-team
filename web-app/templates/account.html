@@ -4,76 +4,14 @@
   <meta charset="UTF-8">
   <title>TranslateNow - Voice Chat</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-
-    header {
-      background-color: #007BFF;
-      color: white;
-      padding: 1em;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 1.5em;
-    }
-
-    .container {
-        max-width: 800px;
-        margin: 2em auto;
-        padding: 1em;
-    }
-
-    .account-info {
-        background-color: white;
-        padding: 2.5em; /* was 1.5em */
-        margin-bottom: 2em;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    .search-record {
-        background-color: white;
-        padding: 1.5em;
-        margin-bottom: 1.5em;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-
-        width: 90%;           /* elastic */
-        max-width: 900px;     /* keeps it nicely readable */
-        margin: auto;         /* centers each box */
-    }
-
-    .search-record p {
-        font-size: 1em;
-        margin: 0.4em 0;
-    }
-
-    .timestamp {
-        color: gray;
-        font-size: 0.85em;
-    }
-
-
-    
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='account.css') }}">
 </head>
 <body>
 
   <header>
     <h1>TranslateNow</h1>
     <nav style="display: flex; gap: 1.5em; align-items: center;">
+      <a href="/home" style="color: white; text-decoration: none; font-weight: 500;">Home</a>
       <a href="/account" style="color: white; text-decoration: none; font-weight: 500;">Account</a>
       <a href="/translator" style="color: white; text-decoration: none; font-weight: 500;">Translator</a>
       <a href="/logout" style="color: white; text-decoration: none; font-weight: 500;">Log out</a>
@@ -82,48 +20,45 @@
   </header>
 
   <div class="container">
-    <div class="account-info">
-      <h1>Account Info</h1>
-      <p><strong>Name:</strong> Maggie</p>
-      <p><strong>Email:</strong> maggie@gmail.com</p>
-    </div>
-    <!-- When backend is connected  -->
-    <!-- <div class="account-info">
-        <h1>Account Info</h1>
-        <p><strong>Name:</strong> {{ user.name }}</p>
-        <p><strong>Email:</strong> {{ user.email }}</p>
-      </div> -->
-  
-    <h2 style="text-align: center; color: #007BFF;">Past Searches</h2>
-
-    <div class="search-record">
-    <p><strong>Input:</strong> hey</p>
-    <p><strong>Translation:</strong> in German</p>
-    <p class="timestamp">2025-04-10 18:05:00</p>
-    </div>
-
-    <div class="search-record">
-    <p><strong>Input:</strong> hello</p>
-    <p><strong>Translation:</strong> como estas</p>
-    <p class="timestamp">2025-04-10 18:06:30</p>
-    </div>
-
-    <!-- when backend is connected  -->
-    <!-- <h2 style="text-align: center; color: #007BFF;">Past Searches</h2>
-
-    {% if searches %}
-      {% for search in searches %}
-        <div class="search-record">
-          <p><strong>Input:</strong> {{ search.input_text }}</p>
-          <p><strong>Translation:</strong> {{ search.translated_text }}</p>
-          <p class="timestamp">{{ search.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+    <main>
+        <!-- Account Header -->
+        <div class="account-header">
+            <h2>My Account</h2>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Log Out</a>
         </div>
-      {% endfor %}
-    {% else %}
-      <p style="text-align: center; color: gray;">No past searches found.</p>
-    {% endif %} -->
-    
+        
+        <!-- Account Details -->
+        <div class="account-card">
+            <h3>Account Details</h3>
+            {% if user %}
+                <p><strong>First Name:</strong> {{ user.first_name | capitalize }}</p>
+                <p><strong>Last Name:</strong> {{ user.last_name | capitalize }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+            {% else %}
+                <p>No account details available.</p>
+            {% endif %}
+        </div>
 
-
-</body>
+        <!-- Past Translations Section -->
+        <h3>My Past Translations</h3>
+        <div class="translations-list">
+            {% if translations %}
+                {% for trans in translations %}
+                    <div class="translation-card">
+                        <p><strong>Input:</strong> {{ trans.input_text }}</p>
+                        <p><strong>Translation:</strong> {{ trans.translated_text }}</p>
+                        <p class="timestamp">
+                            Submitted: {{ trans.timestamp }}
+                            {% if trans.translated_timestamp %}
+                                | Translated: {{ trans.translated_timestamp }}
+                            {% endif %}
+                        </p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p style="text-align: center; color: gray;">No past translations found.</p>
+            {% endif %}
+        </div>
+    </main>
+</div>
 </html>

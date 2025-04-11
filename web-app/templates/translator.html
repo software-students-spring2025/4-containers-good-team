@@ -4,19 +4,16 @@
   <meta charset="UTF-8">
   <title>TranslateNow - Voice Chat</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="translator.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='translator.css') }}">
 </head>
 <body>
   <header>
     <h1>TranslateNow</h1>
     <nav style="display: flex; gap: 1.5em; align-items: center;">
+      <a href="/home" style="color: white; text-decoration: none; font-weight: 500;">Home</a>
       <a href="/account" style="color: white; text-decoration: none; font-weight: 500;">Account</a>
       <a href="/translator" style="color: white; text-decoration: none; font-weight: 500;">Translator</a>
       <a href="/logout" style="color: white; text-decoration: none; font-weight: 500;">Log out</a>
-      
-      <!-- <form action="/logout" method="POST" style="margin: 0;">
-        <button class="logout-btn" type="submit">Logout</button>
-      </form> -->
     </nav>
   </header>
 
@@ -33,7 +30,6 @@
         <option value="el">Greek</option>
         <option value="it">Italian</option>
         <option value="ja">Japanese</option>
-        <option value="zh">Chinese (Simplified)</option>
         <option value="ar">Arabic</option>
         <option value="ru">Russian</option>
         <option value="hi">Hindi</option>

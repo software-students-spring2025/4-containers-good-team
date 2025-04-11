@@ -4,24 +4,30 @@
   <meta charset="UTF-8">
   <title>Login - TranslateNow</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="login.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
 </head>
-<body>
-
-  <div class="login-popup">
-    <a href="/" class="close-btn">&times;</a>
-    <h2>Login to TranslateNow</h2>
-    <form action="/login" method="POST">
-      <input type="text" name="username" placeholder="Username" required>
+<div class="login-container">
+  <div class="login-box">
+    <h1>TranslateNow</h1>
+    <p>TranslateNow is your voice-powered language assistant. Speak and instantly translate into your chosen language.</p>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    
+    <form action="{{ url_for('login') }}" method="POST">
+      <input type="email" name="email" placeholder="Email" required>
       <input type="password" name="password" placeholder="Password" required>
-      <button type="submit">Login</button>
+      <button type="submit" class="login-btn">Log In</button>
     </form>
-    <div class="small-text">
-      Don't have an account? <a href="/register">Register</a>
-    </div>
-    <a href="/translator" class="btn">temporary tranlsator button until backend is fixed</a>
+    <hr>
+    <a href="{{ url_for('register') }}" class="create-account-btn">Create new account</a>
   </div>
-  
-
-</body>
+</div>
 </html>

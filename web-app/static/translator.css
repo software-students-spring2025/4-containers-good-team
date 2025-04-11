@@ -7,20 +7,38 @@ body {
     flex-direction: column;
     height: 100vh;
 }
-
-header {
-background-color: #007BFF;
-color: white;
-padding: 1em;
-display: flex;
-justify-content: space-between;
-align-items: center;
-}
-
-header h1 {
-margin: 0;
-font-size: 1.5em;
-}
+  
+  header {
+    background-color: #007BFF;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    color: white;
+  }
+  
+  .logo h1 {
+    margin: 0;
+    font-size: 24px;
+  }
+  
+  nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+  }
+  
+  nav ul li {
+    margin: 0 15px;
+  }
+  
+  nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    transition: color 0.3s;
+  }
 
 .logout-btn {
 background-color: white;
