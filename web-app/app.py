@@ -15,6 +15,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 load_dotenv()
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "fallback_key_if_missing")
 app.config["MONGO_URI"] = os.getenv("MONGO_URI")
 mongo = PyMongo(app)
 
@@ -139,15 +140,21 @@ def submit_text():
     target_language = data.get("target_language", "es")
     if not input_text:
         return jsonify({"error": "Input text is required"}), 400
+    
+    # Build the document and include a user identifier if logged in
     document = {
         "input_text": input_text,
         "target_language": target_language,
         "timestamp": datetime.datetime.now(),
     }
+    if session.get("user_id"):
+        document["user_id"] = session.get("user_id")
+
     result = mongo.db.sensor_data.insert_one(document)
-    return jsonify(
-        {"message": "Text submitted successfully", "id": str(result.inserted_id)}
-    )
+    return jsonify({
+        "message": "Text submitted successfully",
+        "id": str(result.inserted_id)
+    })
 
 
 if __name__ == "__main__":
