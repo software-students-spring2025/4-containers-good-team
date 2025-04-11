@@ -114,9 +114,15 @@
 
   <header>
     <h1>TranslateNow</h1>
-    <form action="/logout" method="POST">
-      <button class="logout-btn" type="submit">Logout</button>
-    </form>
+    <nav style="display: flex; gap: 1.5em; align-items: center;">
+      <a href="/account" style="color: white; text-decoration: none; font-weight: 500;">Account</a>
+      <a href="/translator" style="color: white; text-decoration: none; font-weight: 500;">Translator</a>
+      <a href="/logout" style="color: white; text-decoration: none; font-weight: 500;">Log out</a>
+      
+      <!-- <form action="/logout" method="POST" style="margin: 0;">
+        <button class="logout-btn" type="submit">Logout</button>
+      </form> -->
+    </nav>
   </header>
 
   <div class="chat-container" id="chat">

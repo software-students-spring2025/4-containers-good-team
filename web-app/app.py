@@ -38,7 +38,6 @@ def translator():
         return redirect(url_for("login"))
     return render_template('translator.html')
 
-# Log in and registration
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -100,7 +99,7 @@ def login():
     # get request; render login page 
     return render_template('login.html')
 
-@app.route("/logout", methods=["POST"])
+@app.route("/logout", methods=["GET"])
 def logout():
     """Logout Functionality"""
     session.clear()
