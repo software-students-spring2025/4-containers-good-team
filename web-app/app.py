@@ -29,6 +29,12 @@ def translator():
     """translate page"""
     return render_template("translator.html")
 
+@app.route("/account")
+def account():
+    """Logout Functionality"""
+    # logout user with flask login
+    return render_template("account.html")
+
 
 @app.route("/register")
 def register():
@@ -46,7 +52,7 @@ def login():
     return render_template("login.html")
 
 
-@app.route("/logout", methods=["POST"])
+@app.route("/logout", methods=["GET"])
 def logout():
     """Logout Functionality"""
     # logout user with flask login
