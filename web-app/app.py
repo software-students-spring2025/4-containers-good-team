@@ -31,24 +31,17 @@ def home():
 
 @app.route("/translator")
 def translator():
-<<<<<<< HEAD
     """Translate page"""
     # check if logged
     if not session.get("username"):
         flash("You must be logged in to access the translator.", "warning")
         return redirect(url_for("login"))
     return render_template('translator.html')
-=======
-    """translate page"""
-    return render_template("translator.html")
-
->>>>>>> main
 
 # Log in and registration
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-<<<<<<< HEAD
     """ Sign in page"""
     # authenticate user
     if request.method == "POST":
@@ -84,18 +77,10 @@ def register():
         return redirect(url_for("login"))
     # get request; render registration form 
     return render_template('register.html')
-=======
-    """Sign in page"""
-    # when user authenticated
-    # redirect to login page
-    return render_template("register.html")
-
->>>>>>> main
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Login page"""
-<<<<<<< HEAD
     #when user authenticated 
     if request.method == "POST":
         email = request.form.get("email")
@@ -114,29 +99,16 @@ def login():
             return redirect(url_for("login"))
     # get request; render login page 
     return render_template('login.html')
-=======
-    # when user authenticated
-    # redirect to translate page
-    return render_template("login.html")
-
->>>>>>> main
 
 @app.route("/logout", methods=["POST"])
 def logout():
     """Logout Functionality"""
-<<<<<<< HEAD
     session.clear()
     flash("Logged out successfully.", "success")
     #logout user with flask login 
     return redirect(url_for("home"))
 
 # Endpoints for sensor/translation data
-=======
-    # logout user with flask login
-    return redirect(url_for("home"))
-
-
->>>>>>> main
 @app.route("/api/sensor_data", methods=["GET"])
 def get_sensor_data():
     """Get sensor data from MongoDB."""
