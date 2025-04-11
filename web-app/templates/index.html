@@ -5,188 +5,60 @@
   <meta charset="UTF-8">
   <title>Welcome to TranslateNow</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f3f3f3;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 0.5em;
-    }
-
-    p {
-      font-size: 1.2em;
-      color: #333;
-      max-width: 500px;
-    }
-
-    .button-group {
-      margin-top: 2em;
-      display: flex;
-      gap: 1em;
-    }
-
-    .btn {
-      padding: 12px 24px;
-      font-size: 1em;
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      text-decoration: none;
-    }
-
-    .btn:hover {
-      background-color: #0056b3;
-    }
-
-    /* POPUP MODAL STYLES */
-    .overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background-color: rgba(0, 0, 0, 0.4);
-      display: none;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal {
-      background: white;
-      padding: 2em;
-      border-radius: 12px;
-      max-width: 400px;
-      width: 90%;
-      position: relative;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    }
-
-    .modal h2 {
-      margin-top: 0;
-    }
-
-    .modal input {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 1em;
-    }
-
-    .modal button {
-      margin-top: 15px;
-      width: 100%;
-      padding: 12px;
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1em;
-      cursor: pointer;
-    }
-
-    .modal button:hover {
-      background-color: #0056b3;
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 1.5em;
-      color: #aaa;
-      cursor: pointer;
-    }
-
-    .close-btn:hover {
-      color: #000;
-    }
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
 </head>
 <body>
 
-  <h1>Welcome to TranslateNow</h1>
-  <p>
-    TranslateNow is your voice-powered language assistant. Speak and instantly translate into your chosen language.<br><br>
-    <strong>Sign in or register to start translating.</strong>
-  </p>
+  <header>
+    <h1>TranslateNow</h1>
+    <nav style="display: flex; gap: 1.5em; align-items: center;">
+      <a href="/home" style="color: white; text-decoration: none; font-weight: 500;">Home</a>
+      <a href="/account" style="color: white; text-decoration: none; font-weight: 500;">Account</a>
+      <a href="/translator" style="color: white; text-decoration: none; font-weight: 500;">Translator</a>
+      <a href="/logout" style="color: white; text-decoration: none; font-weight: 500;">Log out</a>
+      
+    </nav>
+  </header>
 
-  <div class="button-group">
-    <button class="btn" onclick="showModal('login')">Sign In</button>
-    <button class="btn" onclick="showModal('register')">Register</button>
-  </div>
+  <div class="container">
+    <main>
+        <h2>Welcome to TranslateNow</h2>
+        <p>
+            Speak and get instant translations. Whether you're learning a new language or connecting with friends, our voice-powered translation app makes it easy.
+        </p>
 
-  <!-- Login Modal -->
-  <div class="overlay" id="loginModal">
-    <div class="modal">
-      <span class="close-btn" onclick="closeModal('login')">&times;</span>
-      <h2>Sign In</h2>
-      <form action="/login" method="POST">
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit">Login</button>
-      </form>
-    </div>
-  </div>
+        <div class="quick-links">
+            <a href="{{ url_for('translator') }}" class="quick-link-card translate">
+                <h3>Translate Now</h3>
+                <p>Start by speaking and view your translation instantly.</p>
+            </a>
+        </div>
 
-  <!-- Register Modal -->
-  <div class="overlay" id="registerModal">
-    <div class="modal">
-      <span class="close-btn" onclick="closeModal('register')">&times;</span>
-      <h2>Register</h2>
-      <form action="/register" method="POST">
-        <input type="text" name="first_name" placeholder="First Name" required>
-        <input type="text" name="last_name" placeholder="Last Name" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <input type="password" name="confirm_password" placeholder="Confirm Password" required>
-        <button type="submit">Register</button>
-        <a href="/translator">translate temp</a>
-      </form>
-    </div>
-  </div>
+        <!-- Recently Translated Phrases Section -->
+        <h3>Recently Translated Phrases</h3>
+        <div class="items-container">
+            {% if recent_translations %}
+                {% for translation in recent_translations %}
+                    <div class="item-card">
+                        <h3>{{ translation.input_text }}</h3>
+                        <p><strong>Translation:</strong> {{ translation.translated_text }}</p>
+                        <p><strong>Language:</strong> {{ translation.target_language | capitalize }}</p>
+                        <p>{% if translation.translator %}
+                            <strong>By:</strong> {{ translation.translator }}
+                            {% endif %}
+                        </p>
+                        <p><strong>Date:</strong> {{ translation.timestamp }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p style="text-align: center; color: gray;">No translations available yet.</p>
+            {% endif %}
+        </div>
+    </main>
+</div>
 
-  <script>
-    function showModal(type) {
-      if (type === 'login') {
-        document.getElementById('loginModal').style.display = 'flex';
-      } else {
-        document.getElementById('registerModal').style.display = 'flex';
-      }
-    }
 
-    function closeModal(type) {
-      if (type === 'login') {
-        document.getElementById('loginModal').style.display = 'none';
-      } else {
-        document.getElementById('registerModal').style.display = 'none';
-      }
-    }
-
-    // Optional: Close modal when clicking outside
-    window.onclick = function(event) {
-      const login = document.getElementById('loginModal');
-      const register = document.getElementById('registerModal');
-      if (event.target === login) login.style.display = "none";
-      if (event.target === register) register.style.display = "none";
-    }
-  </script>
 
 </body>
+
 </html>

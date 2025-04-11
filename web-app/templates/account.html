@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TranslateNow - Voice Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='account.css') }}">
+</head>
+<body>
+
+  <header>
+    <h1>TranslateNow</h1>
+    <nav style="display: flex; gap: 1.5em; align-items: center;">
+      <a href="/home" style="color: white; text-decoration: none; font-weight: 500;">Home</a>
+      <a href="/account" style="color: white; text-decoration: none; font-weight: 500;">Account</a>
+      <a href="/translator" style="color: white; text-decoration: none; font-weight: 500;">Translator</a>
+      <a href="/logout" style="color: white; text-decoration: none; font-weight: 500;">Log out</a>
+      
+    </nav>
+  </header>
+
+  <div class="container">
+    <main>
+        <!-- Account Header -->
+        <div class="account-header">
+            <h2>My Account</h2>
+            <a href="{{ url_for('logout') }}" class="logout-btn">Log Out</a>
+        </div>
+        
+        <!-- Account Details -->
+        <div class="account-card">
+            <h3>Account Details</h3>
+            {% if user %}
+                <p><strong>First Name:</strong> {{ user.first_name | capitalize }}</p>
+                <p><strong>Last Name:</strong> {{ user.last_name | capitalize }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+            {% else %}
+                <p>No account details available.</p>
+            {% endif %}
+        </div>
+
+        <!-- Past Translations Section -->
+        <h3>My Past Translations</h3>
+        <div class="translations-list">
+            {% if translations %}
+                {% for trans in translations %}
+                    <div class="translation-card">
+                        <p><strong>Input:</strong> {{ trans.input_text }}</p>
+                        <p><strong>Translation:</strong> {{ trans.translated_text }}</p>
+                        <p class="timestamp">
+                            Submitted: {{ trans.timestamp }}
+                            {% if trans.translated_timestamp %}
+                                | Translated: {{ trans.translated_timestamp }}
+                            {% endif %}
+                        </p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p style="text-align: center; color: gray;">No past translations found.</p>
+            {% endif %}
+        </div>
+    </main>
+</div>
+</html>
