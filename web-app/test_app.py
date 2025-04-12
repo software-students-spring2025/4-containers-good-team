@@ -18,6 +18,7 @@ def test_example():
 
 # simulate MongoDB operations.
 class DummyCollection:
+    """A dummy collection class to simulate MongoDB collection operations."""
     def __init__(self):
         """Initialize the DummyCollection class."""
         self.data = []
@@ -32,6 +33,7 @@ class DummyCollection:
         document["_id"] = "dummy_id"
         self.data.append(document)
         class DummyInsert:
+            """A dummy insert result class."""
             inserted_id = "dummy_id"
         return DummyInsert()
     def find(self, query):
@@ -104,8 +106,7 @@ def test_register_post_existing_user(client):
         "password": "password",
         "confirm_password": "password"
     }
-    response1 = client.post("/register", data=data)
-    # registering
+    #response1 = client.post("/register", data=data)
     response2 = client.post("/register", data=data)
     assert response2.status_code == 302
     assert "register" in response2.headers["Location"]
