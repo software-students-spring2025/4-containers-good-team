@@ -53,7 +53,7 @@ Set up your .env:
 cp .env.example .env
 ```
 
-Replace with your MongoDB connection string
+Replace the template URI with your MongoDB connection string
 
 Run the command:
 ```shell
