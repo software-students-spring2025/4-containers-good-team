@@ -1,3 +1,4 @@
+# pylint: disable=r0903,w0612,w0621
 """
 Testing for app.py.
 
