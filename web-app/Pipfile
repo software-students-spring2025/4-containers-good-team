@@ -9,6 +9,8 @@ flask-pymongo = "*"
 python-dotenv = "*"
 pylint = "*"
 black = "*"
+pytest = "*"
+
 
 [dev-packages]
 

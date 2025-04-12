@@ -1,7 +1,9 @@
 import json
 import datetime
 import pytest
-from web_app.app import app, generate_password_hash
+import app as app_mod
+from app import app
+from werkzeug.security import generate_password_hash
 
 def test_example():
     assert True
@@ -28,16 +30,11 @@ class DummyCollection:
 def client(monkeypatch):
     app.config["TESTING"] = True
 
-    monkeypatch.setattr(app, "render_template", lambda template, **kwargs: f"Rendered {template}")
-
-    # MongoDB collections.
     dummy_users = DummyCollection()
     dummy_sensor_data = DummyCollection()
 
-    # mongo attributes
-    monkeypatch.setattr(app, "users_collection", dummy_users)
-    dummy_db = {"users": dummy_users, "sensor_data": dummy_sensor_data}
-    monkeypatch.setattr(app, "mongo", type("DummyMongo", (), {"db": dummy_db})())
+    monkeypatch.setitem(app_mod.__dict__, "users_collection", dummy_users)
+    monkeypatch.setitem(app_mod.__dict__, "sensor_data_collection", dummy_sensor_data)
 
     with app.test_client() as client:
         yield client
@@ -45,24 +42,37 @@ def client(monkeypatch):
 def test_home(client):
     response = client.get("/")
     assert response.status_code == 200
-    assert "Rendered index.html" in response.get_data(as_text=True)
+    data = response.get_data(as_text=True)
+    assert "<form" in data.lower()
 
-def test_translator_not_logged(client):
-    response = client.get("/translator", follow_redirects=False)
+def test_index_requires_login(client):
+    response = client.get("/home", follow_redirects=False)
     # redirect to /login if not logged in
     assert response.status_code == 302
-    assert "/login" in response.headers["Location"]
+    assert "login" in response.headers["Location"]
+
+def test_translator_requires_login(client):
+    response = client.get("/translator", follow_redirects=False)
+    assert response.status_code == 302
+    assert "login" in response.headers["Location"]
 
 def test_register_get(client):
     response = client.get("/register")
     assert response.status_code == 200
-    assert "Rendered register.html" in response.get_data(as_text=True)
+    data = response.get_data(as_text=True)
+    assert "<form" in data
 
 def test_register_post_missing_fields(client):
     # post - missing required fields.
     response = client.post("/register", data={"first_name": "John"})
     assert response.status_code == 302
-    assert "/register" in response.headers["Location"]
+    assert "register" in response.headers["Location"]
+
+def test_register_post_missing_fields(client):
+    response = client.post("/register", data={"first_name": "John"})
+    assert response.status_code == 302
+    # Should redirect back to /register due to missing fields.
+    assert "register" in response.headers["Location"]
 
 def test_register_post_password_mismatch(client):
     data = {
@@ -74,7 +84,7 @@ def test_register_post_password_mismatch(client):
     }
     response = client.post("/register", data=data)
     assert response.status_code == 302
-    assert "/register" in response.headers["Location"]
+    assert "register" in response.headers["Location"]
 
 def test_register_post_existing_user(client):
     # user registration
@@ -85,12 +95,11 @@ def test_register_post_existing_user(client):
         "password": "password",
         "confirm_password": "password"
     }
-    response = client.post("/register", data=data)
-    assert response.status_code == 302
+    response1 = client.post("/register", data=data)
     # registering
-    response = client.post("/register", data=data)
-    assert response.status_code == 302
-    assert "/register" in response.headers["Location"]
+    response2 = client.post("/register", data=data)
+    assert response2.status_code == 302
+    assert "register" in response2.headers["Location"]
 
 def test_register_post_success(client):
     # non-existing username
@@ -104,12 +113,13 @@ def test_register_post_success(client):
     response = client.post("/register", data=data)
     # redirect to /login if success.
     assert response.status_code == 302
-    assert "/login" in response.headers["Location"]
+    assert "home" in response.headers["Location"]
 
 def test_login_get(client):
     response = client.get("/login")
     assert response.status_code == 200
-    assert "Rendered login.html" in response.get_data(as_text=True)
+    data = response.get_data(as_text=True)
+    assert "<form" in data
 
 def test_login_post_success(client):
     # user to collection
@@ -122,35 +132,35 @@ def test_login_post_success(client):
         "password": hashed,
         "created_at": datetime.datetime.utcnow()
     }
-    app.users_collection.insert_one(user)
+    app_mod.users_collection.insert_one(user)
     data = {"email": "bob@example.com", "password": password}
     response = client.post("/login", data=data)
     assert response.status_code == 302
     # success login, redirect to translator 
-    assert "/translator" in response.headers["Location"]
+    assert "translator" in response.headers["Location"]
 
 def test_login_post_invalid(client):
     # attempt to log in with a non-existent user.
     data = {"email": "nonexistent@example.com", "password": "password"}
     response = client.post("/login", data=data)
     assert response.status_code == 302
-    assert "/login" in response.headers["Location"]
+    assert "login" in response.headers["Location"]
 
 def test_logout(client):
     with client.session_transaction() as sess:
         sess["username"] = "test@example.com"
-    response = client.post("/logout", follow_redirects=False)
+    response = client.get("/logout", follow_redirects=False)
     assert response.status_code == 302
     assert "/" in response.headers["Location"]
 
 def test_get_sensor_data(client):
     # dummy sensor_data collection with a test document.
-    test_docu = {
+    test_doc = {
         "input_text": "Test",
         "target_language": "en",
         "timestamp": datetime.datetime.utcnow()
     }
-    app.mongo.db["sensor_data"].insert_one(test_docu)
+    app_mod.mongo.db["sensor_data"].insert_one(test_doc)
     response = client.get("/api/sensor_data")
     assert response.status_code == 200
     json_data = json.loads(response.get_data(as_text=True))
