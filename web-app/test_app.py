@@ -1,9 +1,9 @@
 import json
 import datetime
 import pytest
+from werkzeug.security import generate_password_hash
 import app as app_mod
 from app import app
-from werkzeug.security import generate_password_hash
 
 def test_example():
     assert True
@@ -136,7 +136,7 @@ def test_login_post_success(client):
     data = {"email": "bob@example.com", "password": password}
     response = client.post("/login", data=data)
     assert response.status_code == 302
-    # success login, redirect to translator 
+    # success login, redirect to translator
     assert "translator" in response.headers["Location"]
 
 def test_login_post_invalid(client):
@@ -189,4 +189,3 @@ def test_submit_text_success(client):
     json_data = json.loads(response.get_data(as_text=True))
     assert json_data.get("message") == "Text submitted successfully"
     assert "id" in json_data
-

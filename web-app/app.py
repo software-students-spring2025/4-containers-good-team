@@ -72,14 +72,12 @@ def register():
         if password != confirm_password:
             flash("Passwords do not match.", "danger")
             return redirect(url_for("register"))
-        
         # check if  user already exists
         existing_user = users_collection.find_one({"email": email})
         if existing_user:
             flash("User already exists with that email.", "danger")
             return redirect(url_for("register"))
-        
-        # create a new user 
+        # create a new user
         new_user = {
             "first_name": first_name,
             "last_name": last_name,
@@ -94,17 +92,16 @@ def register():
         flash("Registration successful! You can now log in.", "success")
         # redirect to login page
         return redirect(url_for("index"))
-    # get request; render registration form 
+    # get request; render registration form
     return render_template('register.html')
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Login page"""
-    #when user authenticated 
+    #when user authenticated
     if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
-        
         # Check for a user with the provided email
         user = users_collection.find_one({"email": email})
         if user and check_password_hash(user["password"], password):
@@ -113,10 +110,9 @@ def login():
             flash("Logged in successfully!", "success")
             #redirect to translate page
             return redirect(url_for("translator"))
-        else:
-            flash("Invalid email or password.", "danger")
-            return redirect(url_for("login"))
-    # get request; render login page 
+        flash("Invalid email or password.", "danger")
+        return redirect(url_for("login"))
+    # get request; render login page
     return render_template('login.html')
 
 @app.route("/logout", methods=["GET"])
@@ -124,7 +120,7 @@ def logout():
     """Logout Functionality"""
     session.clear()
     flash("Logged out successfully.", "success")
-    #logout user with flask login 
+    #logout user with flask login
     return redirect(url_for("home"))
 
 @app.route("/account")
@@ -179,7 +175,6 @@ def submit_text():
     target_language = data.get("target_language", "es")
     if not input_text:
         return jsonify({"error": "Input text is required"}), 400
-    
     # Build the document and include a user identifier if logged in
     document = {
         "input_text": input_text,
@@ -190,7 +185,6 @@ def submit_text():
         document["user_id"] = session.get("user_id")
     if session.get("username"):
         document["translator"] = session.get("username")
-
     result = mongo.db.sensor_data.insert_one(document)
     return jsonify({
         "message": "Text submitted successfully",
