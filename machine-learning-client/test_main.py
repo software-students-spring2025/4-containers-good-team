@@ -1,18 +1,26 @@
-# pylint: disable=r0903,w0612,w0621
-import datetime
+# pylint: disable=r0903,w0613,w0621
 import pytest
 import main as ml_client
 
 
 # DummyCollection simulates MongoDB collection operations
 class DummyCollection:
+    """A dummy collection class to simulate MongoDB collection operations."""
     def __init__(self):
+        """Initialize the DummyCollection with an empty data list."""
         self.data = []
 
     def find(self, query):
+        """
+        Simulate the find() method by returning all documents that have an "input_text" 
+        field but do not have a "translated_text" field.
+        """
         return [doc for doc in self.data if "input_text" in doc and "translated_text" not in doc]
 
     def update_one(self, query, update):
+        """
+        Simulate the update_one() method by finding the document with a matching "_id" 
+        """
         for doc in self.data:
             if doc.get("_id") == query.get("_id"):
                 for key, value in update.get("$set", {}).items():
@@ -21,16 +29,31 @@ class DummyCollection:
 
 # DummyTranslator now creates an instance with a properly set text attribute.
 class DummyTranslation:
+    """
+    A dummy translation result that simulates the output of a translation API.
+    """
     def __init__(self, text):
+        """
+        Initialize a DummyTranslation instance with a "translated" text.
+        """
         self.text = f"translated_{text}"
 
 class DummyTranslator:
+    """
+    A dummy translator class to simulate translation behavior.
+    """
     def translate(self, text, dest):
+        """
+        Simulate the translation by returning a DummyTranslation instance.
+        """
         return DummyTranslation(text)
 
 # Pytest fixture to set up the ML client globals.
 @pytest.fixture
 def ml_client_setup(monkeypatch):
+    """
+    Fixture to set up and patch the ML client module globals for testing.
+    """
     dummy_sensor_data = DummyCollection()
     dummy_sensor_data.data = [
         {"_id": 1, "input_text": "hello", "target_language": "fr"},
