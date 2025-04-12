@@ -48,6 +48,13 @@ Clone the repository:
 git clone https://github.com/software-students-spring2025/4-containers-good-team.git
 ```
 
+Set up your .env:
+```
+cp .env.example .env
+```
+
+Replace with your MongoDB connection string
+
 Run the command:
 ```shell
 docker-compose up --build
