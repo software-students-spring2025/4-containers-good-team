@@ -1,3 +1,4 @@
+# pylint: disable=r0903,w0612,w0621
 import datetime
 import pytest
 import main as ml_client
@@ -33,7 +34,8 @@ def ml_client_setup(monkeypatch):
     dummy_sensor_data = DummyCollection()
     dummy_sensor_data.data = [
         {"_id": 1, "input_text": "hello", "target_language": "fr"},
-        {"_id": 2, "input_text": "world", "target_language": "es", "translated_text": "old_translation"},
+        {"_id": 2, "input_text": "world",
+          "target_language": "es", "translated_text": "old_translation"},
         {"_id": 3, "input_text": "test", "target_language": "de"}
     ]
     dummy_translator = DummyTranslator()
